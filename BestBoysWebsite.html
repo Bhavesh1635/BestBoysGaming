@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PowerPlay Zone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom right, #1e3a8a, #6b21a8);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { font-size: 3rem; margin-bottom: 0.5em; }
+    .subtitle { font-size: 1.2rem; margin-bottom: 2em; }
+    .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 20px;
+      transition: transform 0.3s ease;
+    }
+    .card:hover { transform: scale(1.05); }
+    .icon { font-size: 40px; margin-bottom: 10px; }
+    .button {
+      background-color: #facc15;
+      color: black;
+      font-size: 1.1rem;
+      padding: 15px 30px;
+      margin: 30px 0;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+    }
+    .button:hover { background-color: #eab308; }
+    .game-area, .leaderboard-area {
+      max-width: 800px;
+      margin: 30px auto;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      border-radius: 10px;
+    }
+    input {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 10px;
+      width: 200px;
+      text-align: center;
+    }
+    footer { margin-top: 2em; font-size: 0.9rem; color: #ccc; }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to PowerPlay Zone!</h1>
+  <p class="subtitle">Where Boys Rule, Games Rock, and Fun Never Ends!</p>
+
+  <div class="card-container">
+    <div class="card">
+      <div class="icon">🎮</div>
+      <h2>Epic Games</h2>
+      <p>Play action, puzzle, racing, and sports games picked for fun and safety!</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧑‍🤝‍🧑</div>
+      <h2>Multiplayer Zone</h2>
+      <p>Team up with friends and family in safe, kid-friendly competitions!</p>
+    </div>
+    <div class="card">
+      <div class="icon">⭐</div>
+      <h2>Achievements</h2>
+      <p>Win badges and level up as you play your favorite games!</p>
+    </div>
+  </div>
+
+  <button class="button" onclick="startGame()">🎮 Start Playing Now</button>
+  <br/>
+  <input type="text" id="playerName" placeholder="Enter your player name" />
+
+  <div class="game-area" id="gameArea" style="display:none;">
+    <h2>Now Playing: Flappy Bird</h2>
+    <iframe src="https://www.gamesnacks.com/games/flappy-bird" title="Flappy Bird"></iframe>
+  </div>
+
+  <div class="leaderboard-area">
+    <h2>🏆 Leaderboard</h2>
+    <p>Player: <span id="currentPlayer">-</span></p>
+    <p>Score: <span id="score">0</span></p>
+    <button class="button" onclick="increaseScore()">+ Add Score</button>
+  </div>
+
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
+
+  <footer>Safe, Fun & Family Approved — © 2025 PowerPlay Zone</footer>
+
+  <script>
+    const gameArea = document.getElementById('gameArea');
+    const scoreEl = document.getElementById('score');
+    const playerNameInput = document.getElementById('playerName');
+    const currentPlayer = document.getElementById('currentPlayer');
+    const clickSound = document.getElementById('clickSound');
+    let score = 0;
+
+    function startGame() {
+      const name = playerNameInput.value.trim();
+      if (name === '') {
+        alert(\"Please enter your player name!\");
+        return;
+      }
+      currentPlayer.textContent = name;
+      clickSound.play();
+      gameArea.style.display = 'block';
+    }
+
+    function increaseScore() {
+      score += 5;
+      scoreEl.textContent = score;
+      clickSound.play();
+    }
+  </script>
+
+</body>
+</html>
