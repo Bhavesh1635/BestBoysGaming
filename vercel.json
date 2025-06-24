@@ -2,14 +2,14 @@
     "version": 2,
     "builds": [
       {
-        "src": "/Bestboyswebsite.html",
+        "src": "/BestBoysWebsite.html",
         "use": "@vercel/static"
       }
     ],
     "routes": [
       {
         "src": "/",
-        "dest": "/Bestboyswebsite.html"
+        "dest": "BestBoysWebsite.html"
       }
     ]
   }
