@@ -4,130 +4,1516 @@
   <meta charset="UTF-8" />
   <title>PowerPlay Zone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
     body {
       margin: 0;
       background: linear-gradient(to bottom right, #1e3a8a, #6b21a8);
       color: white;
       text-align: center;
       padding: 20px;
+      overflow-x: hidden;
     }
-    h1 { font-size: 3rem; margin-bottom: 0.5em; }
-    .subtitle { font-size: 1.2rem; margin-bottom: 2em; }
-    .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5em;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2em;
+    }
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
     .card {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       padding: 20px;
       border-radius: 20px;
       transition: transform 0.3s ease;
+      cursor: default;
     }
-    .card:hover { transform: scale(1.05); }
-    .icon { font-size: 40px; margin-bottom: 10px; }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
     .button {
       background-color: #facc15;
       color: black;
       font-size: 1.1rem;
       padding: 15px 30px;
-      margin: 30px 0;
+      margin: 30px 0 10px 0;
       border: none;
       border-radius: 15px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
-    .button:hover { background-color: #eab308; }
-    .game-area, .leaderboard-area {
+    .button:hover {
+      background-color: #eab308;
+    }
+    .game-selector {
       max-width: 800px;
       margin: 30px auto;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 20px;
       padding: 20px;
+      display: none;
     }
-    iframe {
-      width: 100%;
-      height: 500px;
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .game-card {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      border-color: #facc15;
+      box-shadow: 0 10px 20px rgba(250, 204, 21, 0.3);
+    }
+    .game-card h3 {
+      margin: 10px 0;
+      color: #facc15;
+    }
+    .game-area {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1000;
+      display: none;
+    }
+    .back-to-menu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
       border: none;
+      padding: 10px 20px;
       border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .back-to-menu:hover {
+      background: rgba(0, 0, 0, 1);
+    }
+    .leaderboard-area {
+      max-width: 800px;
+      margin: 30px auto;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
     }
     input {
       padding: 10px;
       border-radius: 10px;
       border: none;
       margin-top: 10px;
-      width: 200px;
+      width: 220px;
       text-align: center;
+      font-size: 1rem;
     }
-    footer { margin-top: 2em; font-size: 0.9rem; color: #ccc; }
+    footer {
+      margin-top: 2em;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+
+    /* Dodge Blocks Game Styles */
+    .blocks-game-container {
+      width: 100%;
+      min-height: 100vh;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      padding: 20px;
+    }
+    .blocks-game-container h1 {
+      margin: 10px;
+      color: #facc15;
+      font-size: 2.5rem;
+    }
+    #blocksCanvas {
+      background: #222;
+      display: block;
+      margin: 10px auto;
+      border: 3px solid #facc15;
+      border-radius: 10px;
+      height: 70vh;
+    }
+    #blocksScore {
+      font-size: 1.5rem;
+      margin: 20px;
+      color: #facc15;
+      font-weight: bold;
+      position: relative;
+      top: -20px;
+    }
+    #blocksRestartBtn {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      display: none;
+      background-color: #facc15;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
+      z-index: 1002;
+    }
+    #blocksRestartBtn:hover {
+      background-color: #eab308;
+    }
+    .blocks-instructions {
+      margin: 20px;
+      font-size: 1.1rem;
+      color: #ccc;
+    }
+
+
+    /* Duck Coin Dash Game Styles */
+    .duck-game-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(#87ceeb 0%, #228B22 90%);
+    }
+    .duck-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    .duck-score {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font: 700 24px/1 sans-serif;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+    }
+    .duck-boss-health {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font: 700 20px/1 sans-serif;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+      display: none;
+    }
+    .duck-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      z-index: 30;
+    }
+    .duck-message {
+      display: none;
+      font: 700 36px/1 sans-serif;
+      color: #fff;
+      text-shadow: 3px 3px 6px #000;
+      white-space: nowrap;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+    .duck-button-row {
+      display: flex;
+      gap: 10px;
+    }
+    .duck-controls button {
+      font: 16px sans-serif;
+      padding: 6px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: gold;
+      color: #000;
+      cursor: pointer;
+    }
+    .duck-controls button:focus, .duck-controls button:active {
+      outline: none;
+      box-shadow: none;
+    }
+    .duck-menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 40px 60px;
+      border-radius: 15px;
+      text-align: center;
+      display: none;
+      z-index: 40;
+      color: #fff;
+      min-width: 300px;
+    }
+    .duck-menu p {
+      margin: 0 0 30px 0;
+      font: 30px/1.2 sans-serif;
+      white-space: pre-line;
+    }
+    .duck-menu button, .duck-reset-btn, .duck-level-btn, .duck-shop-btn, .duck-save-btn {
+      font: 22px sans-serif;
+      padding: 14px 28px;
+      margin: 10px 12px;
+      border: 0;
+      border-radius: 10px;
+      background: gold;
+      color: #000;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .duck-level-select {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      padding: 50px 70px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 30;
+      color: #fff;
+    }
+    .duck-level-select h1 {
+      margin: 0 0 20px 0;
+      font: 64px sans-serif;
+      color: #fff;
+    }
+    .duck-level-select p {
+      margin: 15px 0;
+      font: 34px sans-serif;
+      color: #fff;
+    }
+    .duck-level-btn {
+      font: 22px sans-serif;
+      padding: 14px 28px;
+      margin: 10px 12px;
+      border: 0;
+      border-radius: 10px;
+      background: gold;
+      color: #000;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .duck-level-btn.locked {
+      background: gray !important;
+      cursor: not-allowed;
+    }
+    .duck-shop {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      padding: 30px 40px;
+      border-radius: 15px;
+      text-align: center;
+      display: none;
+      z-index: 50;
+    }
+    .duck-shop h2 {
+      margin-top: 0;
+    }
+    .duck-shop button {
+      font: 20px sans-serif;
+      margin: 10px;
+      padding: 10px 25px;
+      border-radius: 8px;
+      background: gold;
+      color: #000;
+      cursor: pointer;
+      border: 0;
+    }
+    .duck-shop .close {
+      background: #f55;
+      color: #fff;
+    }
+    .purchased {
+      background: #4CAF50 !important;
+      color: #fff !important;
+    }
+    .duck-debug-info {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      color: #fff;
+      font: 14px monospace;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 20;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to PowerPlay Zone!</h1>
-  <p class="subtitle">Where Boys Rule, Games Rock, and Fun Never Ends!</p>
 
-  <div class="card-container">
-    <div class="card">
-      <div class="icon">🎮</div>
-      <h2>Epic Games</h2>
-      <p>Play action, puzzle, racing, and sports games picked for fun and safety!</p>
+  <div id="mainMenu">
+    <h1>Welcome to PowerPlay Zone!</h1>
+    <p class="subtitle">Where Boys Rule, Games Rock, and Fun Never Ends!</p>
+
+
+    <div class="card-container">
+      <div class="card">
+        <div class="icon">🎮</div>
+        <h2>Epic Games</h2>
+        <p>Play action, puzzle, racing, and sports games picked for fun and safety!</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧑‍🤝‍🧑</div>
+        <h2>Multiplayer Zone</h2>
+        <p>Team up with friends and family in safe, kid-friendly competitions!</p>
+      </div>
+      <div class="card">
+        <div class="icon">⭐</div>
+        <h2>Achievements</h2>
+        <p>Win badges and level up as you play your favorite games!</p>
+      </div>
     </div>
-    <div class="card">
-      <div class="icon">🧑‍🤝‍🧑</div>
-      <h2>Multiplayer Zone</h2>
-      <p>Team up with friends and family in safe, kid-friendly competitions!</p>
+
+
+    <button class="button" onclick="showGameSelector()">🎮 Start Playing Now</button>
+    <br />
+    <input type="text" id="playerName" placeholder="Enter your player name" />
+
+
+    <div class="game-selector" id="gameSelector">
+      <h2>🎮 Choose Your Game</h2>
+      <div class="game-grid">
+        <div class="game-card" onclick="startDuckCoinDash()">
+          <div class="icon">🦆</div>
+          <h3>Duck Coin Dash</h3>
+          <p>Guide your duck through challenging levels, collect coins, and battle the boss! Features 5 exciting levels with power-ups and achievements.</p>
+          <div style="margin-top: 10px;">
+            <span style="background: #4CAF50; padding: 4px 8px; border-radius: 5px; font-size: 12px;">⭐ Adventure</span>
+            <span style="background: #FF9800; padding: 4px 8px; border-radius: 5px; font-size: 12px; margin-left: 5px;">🏆 Boss Battle</span>
+          </div>
+        </div>
+       
+        <div class="game-card" onclick="startBlocksGame()">
+          <div class="icon">🧱</div>
+          <h3>Dodge the Blocks</h3>
+          <p>Test your reflexes! Dodge falling blocks and survive as long as possible. Use arrow keys to move and avoid the red blocks falling from above!</p>
+          <div style="margin-top: 10px;">
+            <span style="background: #F44336; padding: 4px 8px; border-radius: 5px; font-size: 12px;">⚡ Arcade</span>
+            <span style="background: #9C27B0; padding: 4px 8px; border-radius: 5px; font-size: 12px; margin-left: 5px;">🎯 Reflexes</span>
+          </div>
+        </div>
+      </div>
+      <button class="button" onclick="hideGameSelector()">← Back to Menu</button>
     </div>
-    <div class="card">
-      <div class="icon">⭐</div>
-      <h2>Achievements</h2>
-      <p>Win badges and level up as you play your favorite games!</p>
+
+
+    <div class="leaderboard-area">
+      <h2>🏆 Leaderboard</h2>
+      <p>Player: <span id="currentPlayer">-</span></p>
+      <p>Score: <span id="score">0</span></p>
+      <button class="button" onclick="increaseScore()">+ Add Score</button>
+    </div>
+
+
+    <footer>Safe, Fun &amp; Family Approved — © 2025 PowerPlay Zone</footer>
+  </div>
+
+
+  <!-- Duck Coin Dash Game Area -->
+  <div class="game-area" id="duckGameArea">
+    <button class="back-to-menu" id="backToMenuBtn" onclick="exitDuckGame()">← Back to Menu</button>
+   
+    <div class="duck-game-container">
+      <canvas id="duckCanvas" class="duck-canvas" tabindex="0"></canvas>
+      <div id="duckScore" class="duck-score">Score: 0</div>
+      <div id="duckBossHealth" class="duck-boss-health">Boss Health: 100</div>
+      <div id="duckDebugInfo" class="duck-debug-info"></div>
+
+
+      <div id="duckControls" class="duck-controls">
+        <div id="duckMessage" class="duck-message">💀 Duck Over! 💀</div>
+        <div class="duck-button-row">
+          <button id="pauseBtn">Pause</button>
+          <button id="muteBtn">Mute</button>
+          <button id="backBtnSide">Menu</button>
+          <button id="debugBtn">Debug</button>
+        </div>
+      </div>
+
+
+      <div id="duckMenu" class="duck-menu">
+        <p id="menuText">Game Over!</p>
+        <button id="redoBtn">Redo Level</button>
+        <button id="backBtn">Back to Menu</button>
+      </div>
+
+
+      <div id="duckShop" class="duck-shop">
+        <h2>Duck Shop</h2>
+        <p id="coinsTotal">Points: 0</p>
+        <button id="buyJump">Buy Extra Jump<br>500 points</button>
+        <button id="buySlow">Buy Slow Farmer<br>800 points</button><br>
+        <button class="close" id="closeShop">Close</button>
+      </div>
+
+
+      <div id="duckLevelSelect" class="duck-level-select">
+        <h1>Duck Coin Dash</h1>
+        <p>Select a Level to Play</p>
+        <div id="levels"></div>
+        <button id="resetBtn" class="duck-reset-btn">Reset All Progress</button><br>
+        <button id="shopBtn" class="duck-shop-btn">Shop</button>
+        <button id="saveBtn" class="duck-save-btn">Save Progress</button>
+      </div>
     </div>
   </div>
 
-  <button class="button" onclick="startGame()">🎮 Start Playing Now</button>
-  <br/>
-  <input type="text" id="playerName" placeholder="Enter your player name" />
 
-  <div class="game-area" id="gameArea" style="display:none;">
-    <h2>Now Playing: Flappy Bird</h2>
-    <iframe src="https://www.gamesnacks.com/games/flappy-bird" title="Flappy Bird"></iframe>
+  <!-- Dodge the Blocks Game Area -->
+  <div class="game-area" id="blocksGameArea">
+    <button class="back-to-menu" id="backToMenuBtnBlocks" onclick="exitBlocksGame()">← Back to Menu</button>
+   
+    <div class="blocks-game-container">
+      <h1>🧱 Dodge the Falling Blocks!</h1>
+      <canvas id="blocksCanvas" width="400" height="600"></canvas>
+      <div id="blocksScore">Score: 0</div>
+      <button id="blocksRestartBtn">Restart Game</button>
+    </div>
   </div>
 
-  <div class="leaderboard-area">
-    <h2>🏆 Leaderboard</h2>
-    <p>Player: <span id="currentPlayer">-</span></p>
-    <p>Score: <span id="score">0</span></p>
-    <button class="button" onclick="increaseScore()">+ Add Score</button>
-  </div>
-
-  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
-
-  <footer>Safe, Fun & Family Approved — © 2025 PowerPlay Zone</footer>
 
   <script>
-    const gameArea = document.getElementById('gameArea');
-    const scoreEl = document.getElementById('score');
-    const playerNameInput = document.getElementById('playerName');
-    const currentPlayer = document.getElementById('currentPlayer');
-    const clickSound = document.getElementById('clickSound');
+    // Main menu functionality
+    const gameArea = document.getElementById("duckGameArea");
+    const blocksGameArea = document.getElementById("blocksGameArea");
+    const scoreEl = document.getElementById("score");
+    const playerNameInput = document.getElementById("playerName");
+    const currentPlayer = document.getElementById("currentPlayer");
+    const gameSelector = document.getElementById("gameSelector");
+    const mainMenu = document.getElementById("mainMenu");
+    const backToMenuBtn = document.getElementById("backToMenuBtn");
+    const backToMenuBtnBlocks = document.getElementById("backToMenuBtnBlocks");
     let score = 0;
 
-    function startGame() {
+
+    // Safe click sound function
+    function playClickSound() {
+      try {
+        // Create a simple beep sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+       
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+       
+        oscillator.frequency.value = 800;
+        oscillator.type = 'square';
+       
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+       
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+      } catch (e) {
+        // Silently fail if audio context is not supported
+        console.log('Audio not supported');
+      }
+    }
+
+
+    function showGameSelector() {
       const name = playerNameInput.value.trim();
-      if (name === '') {
-        alert(\"Please enter your player name!\");
+      if (name === "") {
+        alert("Please enter your player name!");
+        playerNameInput.focus();
         return;
       }
       currentPlayer.textContent = name;
-      clickSound.play();
-      gameArea.style.display = 'block';
+      gameSelector.style.display = "block";
+      playClickSound();
     }
+
+
+    function hideGameSelector() {
+      gameSelector.style.display = "none";
+      playClickSound();
+    }
+
 
     function increaseScore() {
       score += 5;
       scoreEl.textContent = score;
-      clickSound.play();
+      playClickSound();
     }
-  </script>
 
+
+    // Duck Coin Dash Integration
+    let duckGameInitialized = false;
+
+
+    function startDuckCoinDash() {
+      mainMenu.style.display = "none";
+      gameArea.style.display = "block";
+     
+      if (!duckGameInitialized) {
+        initDuckGame();
+        duckGameInitialized = true;
+      } else {
+        // Reset to level select if already initialized
+        if (typeof returnToMainMenu !== 'undefined') {
+          returnToMainMenu();
+        }
+      }
+     
+      playClickSound();
+    }
+
+
+    function exitDuckGame() {
+      if (typeof run !== 'undefined' && run && typeof stopLevel !== 'undefined') {
+        stopLevel();
+      }
+      gameArea.style.display = "none";
+      mainMenu.style.display = "block";
+      playClickSound();
+    }
+
+
+    // Blocks Game Integration
+    let blocksGameInitialized = false;
+
+
+    function startBlocksGame() {
+      mainMenu.style.display = "none";
+      blocksGameArea.style.display = "block";
+     
+      if (!blocksGameInitialized) {
+        initBlocksGame();
+        blocksGameInitialized = true;
+      } else {
+        // Restart the game if already initialized
+        initBlocksGame();
+      }
+     
+      playClickSound();
+    }
+
+
+    function exitBlocksGame() {
+      if (blocksSpawnInterval) {
+        clearInterval(blocksSpawnInterval);
+      }
+      blocksGameArea.style.display = "none";
+      mainMenu.style.display = "block";
+      playClickSound();
+    }
+
+
+    // Dodge the Blocks Game Code
+    // Dodge the Blocks Game Code
+    // ...existing code...
+
+
+    // Dodge the Blocks Game (copied from 4thpage.html)
+    const blocksCanvas = document.getElementById('blocksCanvas');
+    const blocksCtx = blocksCanvas.getContext('2d');
+    const blocksRestartBtn = document.getElementById('blocksRestartBtn');
+
+
+    let blocksPlayer, blocks, blocksScore, blocksGameOver, blocksKeys;
+
+
+    function initBlocksGame() {
+      blocksPlayer = {
+        x: 180,
+        y: 550,
+        width: 40,
+        height: 40,
+        speed: 3
+      };
+
+
+      blocks = [];
+      blocksScore = 0;
+      blocksGameOver = false;
+      blocksKeys = {};
+     
+      // Reset frame timing
+      lastFrameTime = performance.now();
+
+
+      document.getElementById('blocksScore').innerText = 'Score: 0';
+      blocksRestartBtn.style.display = 'none';
+
+
+      requestAnimationFrame(updateBlocksGame);
+    }
+
+
+    document.addEventListener('keydown', (e) => {
+      if (blocksGameArea.style.display === 'block') {
+        blocksKeys[e.key] = true;
+        e.preventDefault();
+      }
+    });
+
+
+    document.addEventListener('keyup', (e) => {
+      if (blocksGameArea.style.display === 'block') {
+        blocksKeys[e.key] = false;
+        e.preventDefault();
+      }
+    });
+
+
+    function movePlayerSmoothBlocks(deltaTime) {
+      if (blocksKeys['ArrowLeft'] && blocksPlayer.x > 0) {
+        blocksPlayer.x -= blocksPlayer.speed * 60 * deltaTime;
+      }
+      if (blocksKeys['ArrowRight'] && blocksPlayer.x < blocksCanvas.width - blocksPlayer.width) {
+        blocksPlayer.x += blocksPlayer.speed * 60 * deltaTime;
+      }
+    }
+
+
+    function drawPlayerBlocks() {
+      blocksCtx.fillStyle = 'lime';
+      blocksCtx.fillRect(blocksPlayer.x, blocksPlayer.y, blocksPlayer.width, blocksPlayer.height);
+    }
+
+
+    function spawnBlockBlocks() {
+      if (!blocksGameOver) {
+        const x = Math.random() * (blocksCanvas.width - 30);
+        blocks.push({
+          x,
+          y: 0,
+          width: Math.random() * 100,
+          height: Math.random() * 200,
+          speed: 3 + Math.random() * 2 // Adjusted for more natural falling speed
+        });
+      }
+    }
+
+
+    function drawBlocksBlocks(deltaTime) {
+      blocksCtx.fillStyle = 'red';
+      blocks.forEach(block => {
+        blocksCtx.fillRect(block.x, block.y, block.width, block.height);
+        block.y += block.speed * deltaTime * 100; // Adjusted multiplier for natural falling speed
+      });
+    }
+
+
+    function checkCollisionBlocks(a, b) {
+      return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+      );
+    }
+
+
+    let lastFrameTime = performance.now();
+   
+    function updateBlocksGame() {
+      if (blocksGameOver || blocksGameArea.style.display !== 'block') return;
+     
+      const currentTime = performance.now();
+      const deltaTime = (currentTime - lastFrameTime) / 1000; // Convert to seconds
+      lastFrameTime = currentTime;
+
+
+      movePlayerSmoothBlocks(deltaTime);
+      blocksCtx.clearRect(0, 0, blocksCanvas.width, blocksCanvas.height);
+
+
+      drawPlayerBlocks();
+      drawBlocksBlocks(deltaTime);
+
+
+      blocks.forEach(block => {
+        if (checkCollisionBlocks(blocksPlayer, block)) {
+          blocksGameOver = true;
+          document.getElementById('blocksScore').style.marginTop = '10px';
+          document.getElementById('blocksScore').innerText = `💥 Game Over! Final Score: ${blocksScore}`;
+          blocksRestartBtn.style.display = 'inline-block';
+        }
+      });
+
+
+      if (!blocksGameOver) {
+        blocksScore++;
+        document.getElementById('blocksScore').innerText = `Score: ${blocksScore}`;
+        requestAnimationFrame(updateBlocksGame);
+      }
+    }
+
+
+    blocksRestartBtn.addEventListener('click', initBlocksGame);
+
+
+    let blocksSpawnInterval;
+    function startBlocksGame() {
+      mainMenu.style.display = "none";
+      blocksGameArea.style.display = "block";
+      initBlocksGame();
+      if (blocksSpawnInterval) clearInterval(blocksSpawnInterval);
+      blocksSpawnInterval = setInterval(spawnBlockBlocks, 1000);
+      playClickSound();
+    }
+
+
+    function exitBlocksGame() {
+      if (blocksSpawnInterval) {
+        clearInterval(blocksSpawnInterval);
+      }
+      blocksGameArea.style.display = "none";
+      mainMenu.style.display = "block";
+      playClickSound();
+    }
+
+
+    document.getElementById('blocksRestartBtn').addEventListener('click', () => {
+      initBlocksGame();
+      playClickSound();
+    });
+
+
+    // Duck Coin Dash Game Code
+    let duckGameLoaded = false;
+
+
+    function initDuckGame() {
+      if (duckGameLoaded) return;
+      duckGameLoaded = true;
+
+
+      // Load Duck Coin Dash images
+      const imgDuck = new Image(), imgDuckFlap = new Image(), imgFarm = new Image(), imgCoin = new Image(), imgBoss = new Image();
+      let assets = 0;
+     
+      function checkAssetsLoaded() {
+        assets++;
+        if (assets === 5) {
+          console.log('All duck game assets loaded, starting game...');
+          startDuckGame();
+        }
+      }
+     
+      // Add error handling for image loading
+      [imgDuck, imgDuckFlap, imgFarm, imgCoin, imgBoss].forEach((img, index) => {
+        img.onload = checkAssetsLoaded;
+        img.onerror = () => {
+          console.error(`Failed to load image ${index}`);
+          checkAssetsLoaded(); // Still proceed even if image fails
+        };
+      });
+     
+      imgDuck.src = "https://i.ibb.co/b51H3Dzd/19fb83e4-f090-444d-a4fa-a219daede377.png";
+      imgDuckFlap.src = "https://i.ibb.co/B5Ywk3cr/3af5c30a-5fae-424a-a0e9-370592ec2dfc.png";
+      imgFarm.src = "https://i.ibb.co/C3Y7gwWM/0d5c53cd-74c4-40d1-abff-0f6dcb93b003.png";
+      imgCoin.src = "https://i.ibb.co/67vVB7j6/20c1b0a8-4cbb-49f4-8eff-985e4d70727f.png";
+      imgBoss.src = "https://i.ibb.co/mVVd4Fk6/f1f0e768-91f2-42ee-99a5-3fc15e21bc82.png"; // Boss farmer image
+
+
+      function startDuckGame() {
+        // Duck Coin Dash game variables
+        const cvs = document.getElementById("duckCanvas");
+        if (!cvs) {
+          console.error('Duck canvas not found');
+          return;
+        }
+       
+        const ctx = cvs.getContext("2d");
+        const groundY = 100;
+       
+        function resize() {
+          cvs.width = innerWidth;
+          cvs.height = innerHeight;
+        }
+        resize();
+        addEventListener("resize", resize);
+
+
+        // DOM refs
+        const scoreEl = document.getElementById("duckScore");
+        const bossHealthEl = document.getElementById("duckBossHealth");
+        const controls = document.getElementById("duckControls");
+        const msg = document.getElementById("duckMessage");
+        const levelSel = document.getElementById("duckLevelSelect");
+        const levelsDiv = document.getElementById("levels");
+        const menu = document.getElementById("duckMenu");
+        const menuText = document.getElementById("menuText");
+        const redoBtn = document.getElementById("redoBtn");
+        const backBtn = document.getElementById("backBtn");
+        const backBtnSide = document.getElementById("backBtnSide");
+        const pauseBtn = document.getElementById("pauseBtn");
+        const muteBtn = document.getElementById("muteBtn");
+        const shop = document.getElementById("duckShop");
+        const shopBtn = document.getElementById("shopBtn");
+        const closeShop = document.getElementById("closeShop");
+        const coinsTotal = document.getElementById("coinsTotal");
+        const buyJump = document.getElementById("buyJump");
+        const buySlow = document.getElementById("buySlow");
+        const resetBtn = document.getElementById("resetBtn");
+        const saveBtn = document.getElementById("saveBtn");
+        const debugBtn = document.getElementById("debugBtn");
+        const debugInfo = document.getElementById("duckDebugInfo");
+
+
+        // Game config
+        const maxLevel = 5;
+        const grav = 0.3;
+        const TURN = 4;
+        let unlocked = [1];
+        let level = 0;
+        let points = 0;
+        let levelStartPoints = 0;
+        let showDebug = false;
+        let gameCompleted = false;
+        let powerUps = {
+          extraJump: false,
+          slowFarmer: false,
+          slowFarmerActive: false,
+          slowFarmerEnd: 0
+        };
+
+
+        const baseCfg = {
+          1: {spd: 2, rate: 2000, jumps: 4, jump: -10},
+          2: {spd: 2, rate: 1800, jumps: 3, jump: -10},
+          3: {spd: 2, rate: 1600, jumps: 2, jump: -12},
+          4: {spd: 3.5, rate: 1400, jumps: 2, jump: -12},
+          5: {spd: 5, rate: 1200, jumps: 1, jump: -14}
+        };
+        let cfg = JSON.parse(JSON.stringify(baseCfg));
+        const WIN = {1: 100, 2: 200, 3: 300, 4: 400, 5: 500};
+
+
+        // Game audio
+        const sCoin = new Audio("retro-coin-4-236671.mp3");
+        const sJump = new Audio("wing-flap-1-6434.mp3");
+        const music = new Audio("8bit-sample-69080 (1).mp3");
+        music.loop = true;
+       
+        // Game state
+        let duck, farm, coins = [], run = false, coinTimer, flapT = 0, score = 0;
+        let paused = false, muted = false, lastFrame, animId;
+        let keysPressed = new Set();
+        let boss = null;
+        let particles = [];
+
+
+        // Helper functions
+        const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+
+        function showControls() { controls.style.display = "flex"; }
+        function hideControls() { controls.style.display = "none"; }
+        function showMsg(text) { msg.textContent = text; msg.style.display = "block"; }
+        function hideMsg() { msg.style.display = "none"; }
+
+
+        // Power-up system
+        function applyPowerUps() {
+          cfg = JSON.parse(JSON.stringify(baseCfg));
+          if (powerUps.extraJump) {
+            cfg[3].jumps = 3;
+            cfg[4].jumps = 3;
+            cfg[5].jumps = 2;
+          }
+        }
+
+
+        // Menu builder
+        function buildLevelMenu() {
+          levelSel.style.display = "block";
+          levelsDiv.innerHTML = "";
+          for (let i = 1; i <= maxLevel; i++) {
+            const b = document.createElement("button");
+            b.textContent = `Level ${i}`;
+            b.className = "duck-level-btn";
+            if (i === 5) b.textContent += " 👹 BOSS";
+            if (!unlocked.includes(i)) {
+              b.disabled = true;
+              b.classList.add("locked");
+              b.textContent += " 🔒";
+            } else {
+              b.onclick = () => startLevel(i);
+            }
+            levelsDiv.appendChild(b);
+          }
+        }
+
+
+        // Reset entities
+        function resetEntities() {
+          applyPowerUps();
+          const c = cfg[level];
+          duck = {
+            x: 50, y: cvs.height - groundY - 60, w: 60, h: 60,
+            vx: 0, vy: 0, jumps: c.jumps, maxJumps: c.jumps,
+            onGround: true, flip: false
+          };
+
+
+          if (level === 5) {
+            farm = null;
+            boss = createSimpleBoss();
+            bossHealthEl.style.display = "block";
+          } else {
+            boss = null;
+            bossHealthEl.style.display = "none";
+            farm = {
+              x: cvs.width - 150, y: cvs.height - groundY - 100,
+              w: 100, h: 100, spd: c.spd, baseSpd: c.spd, flip: false
+            };
+          }
+
+
+          coins = [];
+          score = 0;
+          flapT = 0;
+          particles = [];
+          powerUps.slowFarmerActive = false;
+          powerUps.slowFarmerEnd = 0;
+          scoreEl.textContent = "Score: 0";
+          keysPressed.clear();
+          clearInterval(coinTimer);
+
+
+          const coinRate = level === 5 ? c.rate * 0.6 : c.rate;
+          coinTimer = setInterval(() => {
+            if (run && !paused) {
+              coins.push({
+                x: cvs.width + 50,
+                y: cvs.height - groundY - 100 - Math.random() * 200,
+                w: 40, h: 40
+              });
+            }
+          }, coinRate);
+        }
+
+
+        // Simple boss for level 5
+        function createSimpleBoss() {
+          return {
+            x: cvs.width - 200,
+            y: cvs.height - groundY - 150,
+            w: 150, h: 150,
+            health: 1000, maxHealth: 1000,
+            spd: 2, vx: 0, vy: 0,
+            flip: false
+          };
+        }
+
+
+        // Start/stop level
+        function startLevel(lv) {
+          level = lv;
+          levelStartPoints = points;
+          hideAllMenus();
+          resetEntities();
+          run = true;
+          paused = false;
+          pauseBtn.textContent = "Pause";
+          scoreEl.style.display = "block";
+          showControls();
+          // Hide back to menu button during gameplay
+          document.getElementById('backToMenuBtn').style.display = 'none';
+          lastFrame = performance.now();
+          if (!muted) {
+            music.currentTime = 0;
+            music.play();
+          }
+          animId = requestAnimationFrame(loop);
+          cvs.focus();
+        }
+
+
+        function stopLevel() {
+          run = false;
+          paused = false;
+          pauseBtn.textContent = "Pause";
+          clearInterval(coinTimer);
+          if (animId) cancelAnimationFrame(animId);
+          hideControls();
+          hideMsg();
+          scoreEl.style.display = "none";
+          bossHealthEl.style.display = "none";
+          debugInfo.style.display = "none";
+          ctx.clearRect(0, 0, cvs.width, cvs.height);
+        }
+
+
+        function hideAllMenus() {
+          levelSel.style.display = "none";
+          menu.style.display = "none";
+          shop.style.display = "none";
+          hideMsg();
+        }
+
+
+        function showGameOverMenu() {
+          stopLevel();
+          music.pause();
+          points = levelStartPoints;
+          menuText.textContent = "💀 Duck Over! 💀";
+          redoBtn.style.display = "inline-block";
+          backBtn.style.display = "inline-block";
+          menu.style.display = "block";
+        }
+
+
+        function showWinMenu() {
+          stopLevel();
+          music.pause();
+          const levelPoints = WIN[level];
+          points += levelPoints;
+
+
+          let winText = `🎉 Level ${level} Complete! 🎉\nYou earned ${levelPoints} points!\nTotal Points: ${points}`;
+          if (level === 5) {
+            winText = `🏆 BOSS DEFEATED! 🏆\n🎉 GAME COMPLETE! 🎉\nYou earned ${levelPoints} points!\nTotal Points: ${points}`;
+            gameCompleted = true;
+          }
+
+
+          menuText.textContent = winText;
+          redoBtn.style.display = "inline-block";
+          backBtn.style.display = "inline-block";
+
+
+          // Add Next Level button if not on last level
+          let nextLevelBtn = document.getElementById("nextLevelBtn");
+          if (!nextLevelBtn) {
+            nextLevelBtn = document.createElement("button");
+            nextLevelBtn.id = "nextLevelBtn";
+            nextLevelBtn.className = "duck-level-btn";
+            nextLevelBtn.textContent = "Next Level";
+            menu.appendChild(nextLevelBtn);
+          }
+          if (level < maxLevel) {
+            nextLevelBtn.style.display = "inline-block";
+            nextLevelBtn.onclick = function() {
+              points = points; // keep points
+              startLevel(level + 1);
+              nextLevelBtn.style.display = "none";
+              playClickSound();
+            };
+          } else {
+            nextLevelBtn.style.display = "none";
+          }
+
+
+          const nextLevel = level + 1;
+          if (nextLevel <= maxLevel && !unlocked.includes(nextLevel) && level !== 5) {
+            unlocked.push(nextLevel);
+          }
+
+
+          menu.style.display = "block";
+        }
+
+
+        // Make returnToMainMenu available globally for the platform
+        window.returnToMainMenu = function() {
+          if (run) stopLevel();
+          music.pause();
+          ctx.clearRect(0, 0, cvs.width, cvs.height);
+          hideAllMenus();
+          buildLevelMenu();
+          levelSel.style.display = "block";
+          // Show back to menu button in level selection
+          document.getElementById('backToMenuBtn').style.display = 'block';
+        }
+
+
+        // Make stopLevel available globally
+        window.stopLevel = stopLevel;
+        window.run = false;
+
+
+        // Game loop
+        function loop(t) {
+          if (!run) return;
+          window.run = run; // Keep global reference updated
+         
+          if (paused) {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = "#228B22";
+            ctx.fillRect(0, cvs.height - groundY, cvs.width, groundY);
+            ctx.font = "bold 72px sans-serif";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "center";
+            ctx.fillText("PAUSED", cvs.width / 2, cvs.height / 2);
+            ctx.textAlign = "left";
+            animId = requestAnimationFrame(loop);
+            return;
+          }
+
+
+          const dt = Math.min((t - lastFrame) / 16.667, 1.5);
+          lastFrame = t;
+          ctx.clearRect(0, 0, cvs.width, cvs.height);
+          ctx.fillStyle = "#228B22";
+          ctx.fillRect(0, cvs.height - groundY, cvs.width, groundY);
+
+
+          // Update duck
+          duck.vy += grav * dt;
+          duck.y += duck.vy * dt;
+          duck.x += duck.vx * dt;
+
+
+          if (duck.y < 0) { duck.y = 0; duck.vy = 0; }
+
+
+          const groundLevel = cvs.height - groundY - duck.h;
+          if (duck.y >= groundLevel) {
+            duck.y = groundLevel;
+            duck.vy = 0;
+            duck.onGround = true;
+            if (duck.maxJumps !== Infinity) {
+              duck.jumps = duck.maxJumps;
+            }
+          } else {
+            duck.onGround = false;
+          }
+
+
+          duck.x = Math.max(0, Math.min(cvs.width - duck.w, duck.x));
+
+
+          // Draw duck
+          ctx.save();
+          if (duck.flip) {
+            ctx.translate(duck.x + duck.w, duck.y);
+            ctx.scale(-1, 1);
+          } else {
+            ctx.translate(duck.x, duck.y);
+          }
+          ctx.drawImage(flapT > 0 ? imgDuckFlap : imgDuck, 0, 0, duck.w, duck.h);
+          ctx.restore();
+
+
+          if (flapT > 0) {
+            flapT -= dt;
+            if (flapT < 0) flapT = 0;
+          }
+
+
+          // Handle boss or farm
+          if (level === 5 && boss) {
+            // Simple boss AI
+            const dx = duck.x - boss.x;
+            if (Math.abs(dx) > TURN) boss.flip = dx < 0;
+            boss.x += Math.sign(dx) * boss.spd * dt;
+            boss.x = Math.max(0, Math.min(cvs.width - boss.w, boss.x));
+
+
+            // Draw boss
+            ctx.save();
+            if (boss.flip) {
+              ctx.translate(boss.x + boss.w, boss.y);
+              ctx.scale(-1, 1);
+            } else {
+              ctx.translate(boss.x, boss.y);
+            }
+            ctx.drawImage(imgBoss, 0, 0, boss.w, boss.h);
+            ctx.restore();
+
+
+            bossHealthEl.textContent = `Boss Health: ${boss.health}`;
+
+
+            if (hit(duck, boss)) {
+              showGameOverMenu();
+              return;
+            }
+          } else if (farm) {
+            // Farm AI
+            const dx = duck.x - farm.x;
+            if (Math.abs(dx) > TURN) farm.flip = dx < 0;
+            farm.x += Math.sign(dx) * farm.spd * dt;
+            farm.x = Math.max(0, Math.min(cvs.width - farm.w, farm.x));
+
+
+            // Draw farm
+            ctx.save();
+            if (farm.flip) {
+              ctx.translate(farm.x + farm.w, farm.y);
+              ctx.scale(-1, 1);
+            } else {
+              ctx.translate(farm.x, farm.y);
+            }
+            ctx.drawImage(imgFarm, 0, 0, farm.w, farm.h);
+            ctx.restore();
+
+
+            if (hit(duck, farm)) {
+              showGameOverMenu();
+              return;
+            }
+          }
+
+
+          // Handle coins
+          coins = coins.filter(c => {
+            c.x -= 5 * dt;
+            ctx.drawImage(imgCoin, c.x, c.y, c.w, c.h);
+            if (hit(duck, c)) {
+              score += 100;
+              if (!muted) sCoin.play();
+              if (level === 5 && boss) {
+                boss.health -= 50;
+                if (boss.health <= 0) {
+                  showWinMenu();
+                  return false;
+                }
+              }
+              scoreEl.textContent = "Score: " + score;
+              return false;
+            }
+            return c.x > -c.w;
+          });
+
+
+          // Check win condition for non-boss levels
+          if (level !== 5 && score >= WIN[level]) {
+            showWinMenu();
+            return;
+          }
+
+
+          animId = requestAnimationFrame(loop);
+        }
+
+
+        // Input handling
+        window.addEventListener("keydown", function(e) {
+          if (!duck || !run || paused || gameArea.style.display !== 'block') return;
+
+
+          const code = e.code;
+          keysPressed.add(code);
+
+
+          if (code === "ArrowLeft" || code === "KeyA") {
+            duck.vx = -5;
+            duck.flip = true;
+            e.preventDefault();
+          }
+          if (code === "ArrowRight" || code === "KeyD") {
+            duck.vx = 5;
+            duck.flip = false;
+            e.preventDefault();
+          }
+
+
+          if ((code === "ArrowUp" || code === "Space") && !keysPressed.has('jumpPressed')) {
+            let canJump = false;
+
+
+            if (duck.maxJumps === Infinity) {
+              canJump = true;
+            } else if (duck.onGround) {
+              canJump = true;
+            } else if (duck.jumps > 0) {
+              canJump = true;
+            }
+
+
+            if (canJump) {
+              duck.vy = cfg[level].jump;
+
+
+              if (duck.maxJumps !== Infinity && !duck.onGround) {
+                duck.jumps--;
+              }
+
+
+              if (!muted) sJump.play();
+              flapT = 15;
+              keysPressed.add('jumpPressed');
+              e.preventDefault();
+            }
+          }
+        });
+
+
+        window.addEventListener("keyup", function(e) {
+          if (!duck || gameArea.style.display !== 'block') return;
+
+
+          const code = e.code;
+          keysPressed.delete(code);
+
+
+          if (code === "ArrowLeft" || code === "KeyA" || code === "ArrowRight" || code === "KeyD") {
+            duck.vx = 0;
+          }
+
+
+          if (code === "ArrowUp" || code === "Space") {
+            keysPressed.delete('jumpPressed');
+          }
+        });
+
+
+        // Button event handlers
+        redoBtn.onclick = () => {
+          points = levelStartPoints;
+          startLevel(level);
+          playClickSound();
+        };
+
+
+        backBtnSide.onclick = backBtn.onclick = () => {
+          if (run) stopLevel();
+          returnToMainMenu();
+          playClickSound();
+        };
+
+
+        pauseBtn.onclick = () => {
+          if (!run) return;
+          paused = !paused;
+          pauseBtn.textContent = paused ? "Resume" : "Pause";
+          playClickSound();
+        };
+
+
+        muteBtn.onclick = () => {
+          muted = !muted;
+          muteBtn.textContent = muted ? "Unmute" : "Mute";
+          if (muted) {
+            music.pause();
+          } else if (run && !paused) {
+            music.play();
+          }
+          playClickSound();
+        };
+
+
+        shopBtn.onclick = () => {
+          coinsTotal.textContent = "Points: " + points;
+          hideAllMenus();
+          shop.style.display = "block";
+          playClickSound();
+        };
+
+
+        closeShop.onclick = () => {
+          returnToMainMenu();
+          playClickSound();
+        };
+
+
+        resetBtn.onclick = () => {
+          if (confirm("Reset all progress?")) {
+            unlocked = [1];
+            points = 0;
+            powerUps = {
+              extraJump: false,
+              slowFarmer: false,
+              slowFarmerActive: false,
+              slowFarmerEnd: 0
+            };
+            buildLevelMenu();
+            playClickSound();
+          }
+        };
+
+
+        // Shop functionality
+        buyJump.onclick = () => {
+          if (points >= 500 && !powerUps.extraJump) {
+            points -= 500;
+            powerUps.extraJump = true;
+            buyJump.textContent = "PURCHASED";
+            buyJump.classList.add("purchased");
+            buyJump.disabled = true;
+            coinsTotal.textContent = "Points: " + points;
+            playClickSound();
+          }
+        };
+
+
+        buySlow.onclick = () => {
+          if (points >= 800 && !powerUps.slowFarmer) {
+            points -= 800;
+            powerUps.slowFarmer = true;
+            buySlow.textContent = "PURCHASED";
+            buySlow.classList.add("purchased");
+            buySlow.disabled = true;
+            coinsTotal.textContent = "Points: " + points;
+            playClickSound();
+          }
+        };
+
+
+        // Initialize the game
+        hideAllMenus();
+        scoreEl.style.display = "none";
+        hideControls();
+        buildLevelMenu();
+       
+        console.log('Duck game initialized successfully');
+      }
+    }
+
+
+    // Initialize games when page loads
+    window.addEventListener('load', () => {
+      console.log('PowerPlay Zone loaded successfully');
+    });
+  </script>
 </body>
 </html>
+
